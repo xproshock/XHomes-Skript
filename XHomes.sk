@@ -1,0 +1,460 @@
+command /sethome [<text>]:
+	permission: xhomes.sethome
+	executable by: players
+	trigger:
+		loop 5 times:
+			if player has permission "xhomes.homes.%loop-value%":
+				set {homesp::%player%} to loop-value
+		if {homesp::%player%} is not set:
+			if {home.sounds} is set:
+				play sound "block.note_block.bell"
+			if {home.actionbar} is set:
+				send actionbar "&cHome limit is not set therefore you cannot create a home!"
+				stop
+			else:
+				send "&cHome limit is not set therefore you cannot create a home!"
+				stop
+		if {homes::%player%} is not set:
+			set {homes::%player%} to 0
+		if {homesp::%player%} > {homes::%player%}:
+			loop 5 times:
+				if loop-value > {homes::%player%}:
+					set {home::%player%::%loop-value%} to player's location
+					add 1 to {homes::%player%}
+					if {home.sounds} is set:
+						play sound "block.note_block.bell"
+					if {home.actionbar} is set:
+						send actionbar "&aSuccessfully set location to home %loop-value%"
+						stop
+					else:
+						send "&aSuccessfully set location to home %loop-value%"
+						stop
+		else:
+			if {home.sounds} is set:
+				play sound "block.note_block.didgeridoo"
+			if {home.actionbar} is set:
+				send actionbar "&cYou cannot create anymore homes!"
+			else:
+				send "&cYou cannot create anymore homes!"
+
+command /home [<text>]:
+	permission: xhomes.home
+	executable by: players
+	trigger:
+		if {adminpanel.loaded} is not set:
+			set {adminpanel.loaded} to true
+			set {homecolor.lblue} to true
+		if {home.teleporting::%player%} is set:
+			if {home.sounds} is set:
+				play sound "block.note_block.didgeridoo"
+			if {home.actionbar} is set:
+				send actionbar "&cYou are already teleporting to a home"
+			else:
+				send "&cYou are already teleporting to a home"
+			stop
+		set {_homes} to a new chest inventory with 4 rows named "&6&lHomes"
+		set slot 0,1,2,3,4,5,6,7,8,9,11,17,18,20,26,27,28,29,30,31,32,33,34 and 35 of {_homes} to gray stained glass pane named " "
+		set slot 10 of {_homes} to writable book named "&6%player%'s Homes"
+		set slot 19 of {_homes} to paper named "&9Location:" with lore "&ax: %player's x coordinate%","&ay: %player's y coordinate%" and "&az: %player's z coordinate%"
+		if {homecolor.lblue} is set:
+			loop 5 times:
+				if {homes::%player%} > loop-value - 1:
+					set slot 11 + loop-value of {_homes} to light blue bed named "&aClick to teleport"
+					set slot 20 + loop-value of {_homes} to light blue dye named "&cClick to remove"
+				else:
+					set slot 11 + loop-value of {_homes} to light gray bed named "&7Not set"
+					set slot 20 + loop-value of {_homes} to gray dye named "&7Not set" with lore "&aClick to Set!"
+		if {homecolor.cyan} is set:
+			loop 5 times:
+				if {homes::%player%} > loop-value - 1:
+					set slot 11 + loop-value of {_homes} to cyan bed named "&aClick to teleport"
+					set slot 20 + loop-value of {_homes} to cyan dye named "&cClick to remove"
+				else:
+					set slot 11 + loop-value of {_homes} to light gray bed named "&7Not set"
+					set slot 20 + loop-value of {_homes} to gray dye named "&7Not set" with lore "&aClick to Set!"
+		if {homecolor.lime} is set:
+			loop 5 times:
+				if {homes::%player%} > loop-value - 1:
+					set slot 11 + loop-value of {_homes} to lime bed named "&aClick to teleport"
+					set slot 20 + loop-value of {_homes} to lime dye named "&cClick to remove"
+				else:
+					set slot 11 + loop-value of {_homes} to light gray bed named "&7Not set"
+					set slot 20 + loop-value of {_homes} to gray dye named "&7Not set" with lore "&aClick to Set!"
+		if {homecolor.purple} is set:
+			loop 5 times:
+				if {homes::%player%} > loop-value - 1:
+					set slot 11 + loop-value of {_homes} to purple bed named "&aClick to teleport"
+					set slot 20 + loop-value of {_homes} to purple dye named "&cClick to remove"
+				else:
+					set slot 11 + loop-value of {_homes} to light gray bed named "&7Not set"
+					set slot 20 + loop-value of {_homes} to gray dye named "&7Not set" with lore "&aClick to Set!"
+		if {homecolor.pink} is set:
+			loop 5 times:
+				if {homes::%player%} > loop-value - 1:
+					set slot 11 + loop-value of {_homes} to pink bed named "&aClick to teleport"
+					set slot 20 + loop-value of {_homes} to pink dye named "&cClick to remove"
+				else:
+					set slot 11 + loop-value of {_homes} to light gray bed named "&7Not set"
+					set slot 20 + loop-value of {_homes} to (gray dye) named "&7Not set" with lore "&aClick to Set!"
+		open {_homes} to player
+		if {home.sounds} is set:
+			play sound "block.note_block.bell"
+
+on inventory click:
+	name of event-inventory is "&6&lHomes":
+		cancel event
+		loop 5 times:
+			if index of event-slot is (11 + loop-value):
+				if {homes::%player%} > (loop-value - 1):
+					if {home.actionbar} is set:
+						close player's inventory
+						set {_homebeforetp} to player's location
+						set {home.teleporting::%player%} to true
+						while {home.teleporting::%player%} is set:
+							add 1 to {home-while.count::%player%}
+							send actionbar "&aTeleporting in %6-{home-while.count::%player%}% seconds"
+							if distance between {_homebeforetp} and player's location is less than 0.5:
+								if {home.sounds} is set:
+									play sound "block.note_block.bell"
+								if {home-while.count::%player%} is 5:
+									delete {home-while.count::%player%}
+									delete {home.teleporting::%player%}
+								wait 1 second
+							else:
+								send actionbar "&cTeleportation canceled due to movement"
+								if {home.sounds} is set:
+									play sound "block.note_block.didgeridoo"
+								delete {home.teleporting::%player%}
+								delete {home-while.count::%player%}
+								stop
+						teleport player to {home::%player%::%loop-value%}
+						send actionbar "&aSuccessfully teleported to home %loop-value%"
+						if {home.sounds} is set:
+							play sound "entity.enderman.teleport"
+					else:
+						close player's inventory
+						set {_homebeforetp} to player's location
+						set {home.teleporting::%player%} to true
+						while {home.teleporting::%player%} is set:
+							add 1 to {home-while.count::%player%}
+							send "&aTeleporting in %6-{home-while.count::%player%}% seconds"
+							if distance between {_homebeforetp} and player's location is less than 0.5:
+								if {home.sounds} is set:
+									play sound "block.note_block.bell"
+								if {home-while.count} is 5:
+									delete {home-while.count::%player%}
+									delete {home.teleporting::%player%}
+								wait 1 second
+							else:
+								send "&cTeleportation canceled due to movement"
+								if {home.sounds} is set:
+									play sound "block.note_block.didgeridoo"
+								delete {home.teleporting::%player%}
+								delete {home-while.count::%player%}
+								stop
+						teleport player to {home::%player%::%loop-value%}
+						send "&aSuccessfully teleported to home %loop-value%"
+						if {home.sounds} is set:
+							play sound "entity.enderman.teleport"
+		if index of event-slot is 21:
+			if {homes::%player%} > 0:
+				remove 1 from {homes::%player%}
+				set {home::%player%::1} to {home::%player%::2}
+				set {home::%player%::2} to {home::%player%::3}
+				set {home::%player%::3} to {home::%player%::4}
+				set {home::%player%::4} to {home::%player%::5}
+				close player's inventory
+				execute player command "home"
+				if {home.actionbar} is set:
+					send actionbar "&cYou have removed your home!"
+				else:
+					send "&cYou have removed your home!"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+			else:
+				execute player command "sethome"
+				close player's inventory
+				execute player command "home"
+		if index of event-slot is 22:
+			if {homes::%player%} > 1:
+				remove 1 from {homes::%player%}
+				set {home::%player%::2} to {home::%player%::3}
+				set {home::%player%::3} to {home::%player%::4}
+				set {home::%player%::4} to {home::%player%::5}
+				close player's inventory
+				execute player command "home"
+				if {home.actionbar} is set:
+					send actionbar "&cYou have removed your home!"
+				else:
+					send "&cYou have removed your home!"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+			else:
+				execute player command "sethome"
+				close player's inventory
+				execute player command "home"
+		if index of event-slot is 23:
+			if {homes::%player%} > 2:
+				remove 1 from {homes::%player%}
+				set {home::%player%::3} to {home::%player%::4}
+				set {home::%player%::4} to {home::%player%::5}
+				close player's inventory
+				execute player command "home"
+				if {home.actionbar} is set:
+					send actionbar "&cYou have removed your home!"
+				else:
+					send "&cYou have removed your home!"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+			else:
+				execute player command "sethome"
+				close player's inventory
+				execute player command "home"
+		if index of event-slot is 24:
+			if {homes::%player%} > 3:
+				remove 1 from {homes::%player%}
+				set {home::%player%::4} to {home::%player%::5}
+				close player's inventory
+				execute player command "home"
+				if {home.actionbar} is set:
+					send actionbar "&cYou have removed your home!"
+				else:
+					send "&cYou have removed your home!"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+			else:
+				execute player command "sethome"
+				close player's inventory
+				execute player command "home"
+		if index of event-slot is 25:
+			if {homes::%player%} > 4:
+				remove 1 from {homes::%player%}
+				close player's inventory
+				execute player command "home"
+				if {home.actionbar} is set:
+					send actionbar "&cYou have removed your home!"
+				else:
+					send "&cYou have removed your home!"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+			else:
+				execute player command "sethome"
+				close player's inventory
+				execute player command "home"
+
+command /adminhome [<text>]:
+	permission: xhomes.admin
+	executable by: players
+	trigger:
+		if {adminpanel.loaded} is not set:
+			set {adminpanel.loaded} to true
+			set {homecolor.lblue} to true
+		set {_homeadmingui} to a new chest inventory with 4 rows named "&a&lXHomes admin panel"
+		set slot 0,1,2,3,4,5,6,7,8,9,17,18,26,27,28,29,30,31,32,33,34 and 35 of {_homeadmingui} to gray stained glass pane named " "
+		set slot 10 of {_homeadmingui} to light blue bed named "&aClick to teleport"
+		set slot 11 of {_homeadmingui} to cyan bed named "&aClick to teleport"
+		set slot 12 of {_homeadmingui} to lime bed named "&aClick to teleport"
+		set slot 13 of {_homeadmingui} to purple bed named "&aClick to teleport"
+		set slot 14 of {_homeadmingui} to pink bed named "&aClick to teleport"
+		if {home.actionbar} is set:
+			set slot 16 of {_homeadmingui} to paper named "&aActionbar Mode" with lore "&aEnabled"
+		else:
+			set slot 16 of {_homeadmingui} to paper named "&aActionbar Mode" with lore "&cDisabled"
+		if {homecolor.lblue} is set:
+			set slot 19 of {_homeadmingui} to light blue dye named "&aEnabled"
+		else:
+			set slot 19 of {_homeadmingui} to light blue dye named "&cDisabled"
+		if {homecolor.cyan} is set:
+			set slot 20 of {_homeadmingui} to cyan dye named "&aEnabled"
+		else:
+			set slot 20 of {_homeadmingui} to cyan dye named "&cDisabled"
+		if {homecolor.lime} is set:
+			set slot 21 of {_homeadmingui} to lime dye named "&aEnabled"
+		else:
+			set slot 21 of {_homeadmingui} to lime dye named "&cDisabled"
+		if {homecolor.purple} is set:
+			set slot 22 of {_homeadmingui} to purple dye named "&aEnabled"
+		else:
+			set slot 22 of {_homeadmingui} to purple dye named "&cDisabled"
+		if {homecolor.pink} is set:
+			set slot 23 of {_homeadmingui} to pink dye named "&aEnabled"
+		else:
+			set slot 23 of {_homeadmingui} to pink dye named "&cDisabled"
+		if {home.sounds} is set:
+			set slot 25 of {_homeadmingui} to note block named "&aSounds" with lore "&aEnabled"
+		else:
+			set slot 25 of {_homeadmingui} to note block named "&aSounds" with lore "&cDisabled"
+		set slot 15 of {_homeadmingui} to stone button named "&fComing Soon!"
+		open {_homeadmingui} to player
+		if {home.sounds} is set:
+			play sound "block.note_block.bell"
+
+on inventory click:
+	name of event-inventory is "&a&lXHomes admin panel":
+		cancel event
+		if index of event-slot is 16:
+			if {home.actionbar} is set:
+				delete {home.actionbar}
+				close player's inventory
+				execute player command "adminhome"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+			else:
+				set {home.actionbar} to true
+				close player's inventory
+				execute player command "adminhome"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+		if index of event-slot is 19:
+			if {homecolor.lblue} is not set:
+				delete {homecolor.pink}
+				delete {homecolor.cyan}
+				delete {homecolor.lime}
+				delete {homecolor.purple}
+				set {homecolor.lblue} to true
+				close player's inventory
+				execute player command "adminhome"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+		if index of event-slot is 20:
+			if {homecolor.cyan} is not set:
+				delete {homecolor.lblue}
+				delete {homecolor.pink}
+				delete {homecolor.lime}
+				delete {homecolor.purple}
+				set {homecolor.cyan} to true
+				close player's inventory
+				execute player command "adminhome"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+		if index of event-slot is 21:
+			if {homecolor.lime} is not set:
+				delete {homecolor.lblue}
+				delete {homecolor.cyan}
+				delete {homecolor.pink}
+				delete {homecolor.purple}
+				set {homecolor.lime} to true
+				close player's inventory
+				execute player command "adminhome"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+		if index of event-slot is 22:
+			if {homecolor.purple} is not set:
+				delete {homecolor.lblue}
+				delete {homecolor.cyan}
+				delete {homecolor.lime}
+				delete {homecolor.pink}
+				set {homecolor.purple} to true
+				close player's inventory
+				execute player command "adminhome"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+		if index of event-slot is 23:
+			if {homecolor.pink} is not set:
+				delete {homecolor.lblue}
+				delete {homecolor.cyan}
+				delete {homecolor.lime}
+				delete {homecolor.purple}
+				set {homecolor.pink} to true
+				close player's inventory
+				execute player command "adminhome"
+				if {home.sounds} is set:
+					play sound "block.note_block.bell"
+		if index of event-slot is 25:
+			if {home.sounds} is set:
+				delete {home.sounds}
+				close player's inventory
+				execute player command "adminhome"
+			else:
+				set {home.sounds} to true
+				close player's inventory
+				execute player command "adminhome"
+				play sound "block.note_block.bell"
+
+command /remhome [<text>]:
+	permission: xhomes.remhome
+	executable by: players
+	trigger:
+		if arg-1 is set:
+			if arg-1 is "1":
+				if {homes::%player%} > 0:
+					remove 1 from {homes::%player%}
+					set {home::%player%::1} to {home::%player%::2}
+					set {home::%player%::2} to {home::%player%::3}
+					set {home::%player%::3} to {home::%player%::4}
+					set {home::%player%::4} to {home::%player%::5}
+					if {home.actionbar} is set:
+						send actionbar "&aSuccessfully removed home 1"
+					else:
+						send "&aSuccessfully removed home 1"
+					if {home.sounds} is set:
+						play sound "block.note_block.bell"
+					stop
+			else if arg-1 is "2":
+				if {homes::%player%} > 1:
+					remove 1 from {homes::%player%}
+					set {home::%player%::2} to {home::%player%::3}
+					set {home::%player%::3} to {home::%player%::4}
+					set {home::%player%::4} to {home::%player%::5}
+					if {home.actionbar} is set:
+						send actionbar "&aSuccessfully removed home 2"
+					else:
+						send "&aSuccessfully removed home 2"
+					if {home.sounds} is set:
+						play sound "block.note_block.bell"
+					stop
+			else if arg-1 is "3":
+				if {homes::%player%} > 2:
+					remove 1 from {homes::%player%}
+					set {home::%player%::3} to {home::%player%::4}
+					set {home::%player%::4} to {home::%player%::5}
+					if {home.actionbar} is set:
+						send actionbar "&aSuccessfully removed home 3"
+					else:
+						send "&aSuccessfully removed home 3"
+					if {home.sounds} is set:
+						play sound "block.note_block.bell"
+					stop
+			else if arg-1 is "4":
+				if {homes::%player%} > 3:
+					remove 1 from {homes::%player%}
+					set {home::%player%::4} to {home::%player%::5}
+					if {home.actionbar} is set:
+						send actionbar "&aSuccessfully removed home 4"
+					else:
+						send "&aSuccessfully removed home 4"
+					if {home.sounds} is set:
+						play sound "block.note_block.bell"
+					stop
+			else if arg-1 is "5":
+				if {homes::%player%} > 4:
+					remove 1 from {homes::%player%}
+					if {home.actionbar} is set:
+						send actionbar "&aSuccessfully removed home 5"
+					else:
+						send "&aSuccessfully removed home 5"
+					if {home.sounds} is set:
+						play sound "block.note_block.bell"
+					stop
+		if {home.actionbar} is set:
+			send actionbar "&cCorrect usage /remhome <home>"
+		else:
+			send "&cCorrect usage /remhome <home>"
+		if {home.sounds} is set:
+			play sound "block.note_block.didgeridoo"
+
+on tab complete of "/remhome":
+	if {homes::%event-player%} > 0:
+		if {homes::%event-player%} > 1:
+			if {homes::%event-player%} > 2:
+				if {homes::%event-player%} > 3:
+					if {homes::%event-player%} > 4:
+						set tab completions for position 1 to "1", "2", "3", "4" and "5"
+					else:
+						set tab completions for position 1 to "1", "2", "3" and "4"
+				else:
+					set tab completions for position 1 to "1", "2" and "3"
+			else:
+				set tab completions for position 1 to "1" and "2"
+		else:
+			set tab completions for position 1 to "1"
