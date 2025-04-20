@@ -14,8 +14,8 @@ Why should I use this:
 -----------------------------------------------------------------------------------------------------------------
 
 How to use:
-Insert in /plugins/skript/scripts
-Then reload the script though console or restart the server
+- Insert in /plugins/skript/scripts
+- Then reload the script though console or restart the server
 Simple
 
 -----------------------------------------------------------------------------------------------------------------
