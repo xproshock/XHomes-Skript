@@ -7,10 +7,10 @@ Warning! This script is only tested in the latest version of skript and in minec
 -----------------------------------------------------------------------------------------------------------------
 
 Why should I use this:
-You can change many things ingame using the admin panel: /adminhome
-It is lightweight compared to most home plugins/scripts
-Constant updates to fit user requests or to make the script better
-You can change the number of homes players can own through permissions
+- You can change many things ingame using the admin panel: /adminhome
+- It is lightweight compared to most home plugins/scripts
+- Constant updates to fit user requests or to make the script better
+- You can change the number of homes players can own through permissions
 -----------------------------------------------------------------------------------------------------------------
 
 How to use:
@@ -28,18 +28,18 @@ SkBee 3.10+ (Only tested versions)
 -----------------------------------------------------------------------------------------------------------------
 
 Permissions:
-xhomes.admin
-xhomes.sethome
-xhomes.home
-xhomes.remhome
-xhomes.homes.# (replace # with a number up to 5)
+- xhomes.admin
+- xhomes.sethome
+- xhomes.home
+- xhomes.remhome
+- xhomes.homes.# (replace # with a number up to 5)
 -----------------------------------------------------------------------------------------------------------------
 
 Commands:
-/sethome
-/home
-/remhome
-/adminhome
+- /sethome
+- /home
+- /remhome
+- /adminhome
 -----------------------------------------------------------------------------------------------------------------
 
 Picture of /home using cyan:
